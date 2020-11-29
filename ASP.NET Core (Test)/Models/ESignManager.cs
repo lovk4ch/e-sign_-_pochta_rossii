@@ -20,17 +20,12 @@ namespace e_sign.Models
     public class ESignManager
     {
         [STAThread]
-        public static int Main(string[] args)
+        public static int GetSign()
         {
-            // Разбираем аргументы
-            if (args.Length < 2)
-            {
-                Console.WriteLine("Pdf.Sign <document> <certificate-dn> [<key-container-password>]");
-                return 1;
-            }
-            string document = args[0];
-            string certificate_dn = args[1];
+            string[] certificates = new string[1] { "28DCE90EAEFBD25C" };
 
+            string document = "request.pdf";
+            string certificate_dn = certificates[0];
 
             // Находим секретный ключ по сертификату в хранилище MY
             X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
@@ -49,7 +44,8 @@ namespace e_sign.Models
             }
             X509Certificate2 certificate = found[0];
 
-            if (args.Length > 2)
+            /*
+             * if (certificates.Length > 2)
             {
                 //set password.
                 Gost3410CryptoServiceProvider cert_key = certificate.PrivateKey as Gost3410CryptoServiceProvider;
@@ -74,6 +70,7 @@ namespace e_sign.Models
                     certificate.PrivateKey = new Gost3410CryptoServiceProvider(cspParameters);
                 }
             }
+            */
 
             PdfReader reader = new PdfReader(document);
             PdfStamper st = PdfStamper.CreateSignature(reader, new FileStream(document + "_signed.pdf", FileMode.Create, FileAccess.Write), '\0');
